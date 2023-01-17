@@ -21,9 +21,24 @@ limitations under the License.
 namespace nvblox {
 
 RgbdMapper::RgbdMapper(float voxel_size_m, MemoryType memory_type)
-    : voxel_size_m_(voxel_size_m), memory_type_(memory_type) {
-  layers_ = LayerCake::create<TsdfLayer, ColorLayer, EsdfLayer, MeshLayer>(
-      voxel_size_m_, memory_type);
+     : voxel_size_m_(voxel_size_m), memory_type_(memory_type) {
+   layers_ = LayerCake(voxel_size_m);
+   {
+     auto layer_ptr = std::make_unique<ColorLayer>(sizeArgumentFromVoxelSize<ColorLayer>(voxel_size_m), memory_type);
+     layers_.insert(std::type_index(typeid(ColorLayer)), move(layer_ptr));
+   }
+   {
+     auto layer_ptr = std::make_unique<TsdfLayer>(sizeArgumentFromVoxelSize<TsdfLayer>(voxel_size_m), memory_type);
+     layers_.insert(std::type_index(typeid(TsdfLayer)), move(layer_ptr));
+   }
+   {
+     auto layer_ptr = std::make_unique<EsdfLayer>(sizeArgumentFromVoxelSize<EsdfLayer>(voxel_size_m), memory_type);
+     layers_.insert(std::type_index(typeid(EsdfLayer)), move(layer_ptr));
+   }
+   {
+     auto layer_ptr = std::make_unique<MeshLayer>(sizeArgumentFromVoxelSize<MeshLayer>(voxel_size_m), memory_type);
+     layers_.insert(std::type_index(typeid(MeshLayer)), move(layer_ptr));
+   }
 }
 
 RgbdMapper::RgbdMapper(const std::string& map_filepath, MemoryType memory_type)

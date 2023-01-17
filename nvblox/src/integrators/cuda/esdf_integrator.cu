@@ -895,7 +895,7 @@ void EsdfIntegrator::sortAndTakeUniqueIndices(
   checkCudaErrors(cudaStreamSynchronize(cuda_stream_));
 
   updated_counter_device_.copyTo(updated_counter_host_);
-  block_indices->resize(*updated_counter_host_);
+  block_indices->resize(*updated_counter_host_*2);
 }
 
 // Combined functions.
